@@ -26,6 +26,28 @@
             android:indeterminateDrawable="@drawable/spinner_ring"
             android:indeterminateOnly="true"
             android:visibility="invisible" /> -->
+
+        <Button
+            android:id="@+id/debugBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="add"
+            android:layout_marginTop="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fragmentContainer" />
+
+        <Button
+            android:id="@+id/debugBtn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="show"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fragmentContainer" />
+
     </FrameLayout>
     <!--
     <fragment

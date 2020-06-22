@@ -1,14 +1,16 @@
 package com.example.moviesfilmroom.presentation.view
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.moviesfilmroom.R
 import com.example.moviesfilmroom.data.entity.MovieItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import java.util.*
 
 
 class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,MovieListFavoriteFragment.MovieListListener {
@@ -24,7 +26,38 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,Mo
         openAllMoviesList()
     }
 
+
+    fun CheckNewRequest() : Boolean{
+
+        return false
+    }
+
+    fun readLastTime(): Long {
+        val sPref = getPreferences(Context.MODE_PRIVATE)
+        val timeMsec = sPref.getLong("LastTime",0)
+        return timeMsec
+    }
+    fun storeLastTime(timeMsec :Long   ) {
+        val sPref = getPreferences(Context.MODE_PRIVATE)
+        val edit = sPref.edit()
+        edit.putLong("LastTime",timeMsec)
+        edit.commit()
+    }
     fun initButtonListener() {
+        findViewById<Button>(R.id.debugBtn).setOnClickListener{
+
+            /*val data = Date();
+            val curTime = data.time
+            val x =(curTime - readLastTime())/1000
+            Log.d(TAG,"GetTime = $curTime $x ")
+            storeLastTime(curTime)*/
+            Log.d(TAG,"Button ")
+        }
+        findViewById<Button>(R.id.debugBtn2).setOnClickListener {
+
+            Log.d(TAG,"Button2 ")
+        }
+
         findViewById<BottomNavigationView>(R.id.navigationBottom).setOnNavigationItemSelectedListener {menuItem ->
             when(menuItem.itemId){
                 R.id.action_allMovies ->{
