@@ -18,6 +18,7 @@ import com.example.moviesfilmroom.data.entity.MovieItem
 import com.example.moviesfilmroom.presentation.viewmodel.MovieListViewModel
 import java.util.ArrayList
 import com.bumptech.glide.Glide
+import com.example.moviesfilmroom.data.entity.Movie
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -51,7 +52,7 @@ class MovieListFragment : Fragment() {
 
         progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         viewModel = ViewModelProviders.of(activity!!).get(MovieListViewModel::class.java!!)
-        viewModel!!.moviesAll.observe(this.viewLifecycleOwner, Observer<List<MovieItem>> { repos ->
+        viewModel!!.moviesAll?.observe(this.viewLifecycleOwner, Observer<List<Movie>> { repos ->
 
             if (repos.size==0) {viewModel!!.onGetDataClick()}
             else
@@ -64,9 +65,10 @@ class MovieListFragment : Fragment() {
             mySnackbar?.setAction(
                 "Повторить запрос?",
                 {
-                    viewModel!!.onGetDataClick()
-                    progressBar?.visibility = View.VISIBLE
-                    Log.d(TAG,"NEW LOAD!!!! from mySnackbar ")
+                    if (viewModel!!.onGetDataClick() == true){
+                        progressBar?.visibility = View.VISIBLE
+                        Log.d(TAG,"NEW LOAD!!!! from mySnackbar ")
+                    } else {Log.d(TAG,"Block NEW LOAD!!!! from mySnackbar ")}
                 })
             mySnackbar?.show()
         })
@@ -77,13 +79,12 @@ class MovieListFragment : Fragment() {
             progressBar?.visibility = View.VISIBLE
         }*/
 
-        viewModel!!.onGetDataClick()
-        progressBar?.visibility = View.VISIBLE
+        if (viewModel!!.onGetDataClick() == true)  { progressBar?.visibility = View.VISIBLE}
     }
 
     private fun initRecycler() {
         adapter = MovieAdapter(LayoutInflater.from(context), object : MovieAdapter.OnRepoSelectedListener {
-            override fun onRepoSelect(item: MovieItem, addToFavorite: Boolean) {
+            override fun onRepoSelect(item: Movie, addToFavorite: Boolean) {
                 if (addToFavorite==false) { listener?.onMovieSelected(item)}
                 else {
                     viewModel!!.onMovieSelect(item,addToFavorite)
@@ -106,8 +107,7 @@ class MovieListFragment : Fragment() {
 
                     //listener?.onMoviesSelected(MoviesItem(1,"1","1",false),-1,0)
                     Log.d(TAG,"NEW LOAD!!!! ")
-                    viewModel!!.onGetDataClick()
-                    progressBar?.visibility = View.VISIBLE
+                    if (viewModel!!.onGetDataClick() == true)  { progressBar?.visibility = View.VISIBLE}
                 }
             }
         })
@@ -118,13 +118,13 @@ class MovieListFragment : Fragment() {
         val picFavorite=itemView.findViewById<ImageView>(R.id.imageFavoriteAll)
         val imageFilm = itemView.findViewById<ImageView>(R.id.imageMovieInAll)
 
-        fun bind(item: MovieItem) {
+        fun bind(item: Movie) {
             nameMovie.text = item.title
             if (item.favorite== true) {picFavorite.setImageResource(R.drawable.ic_favorite_black_24dp)}
             else {picFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp)}
 
             Glide.with(imageFilm.context)
-                .load(item.gitUrl)
+                .load(item.picUrl)
                 .placeholder(R.drawable.ic_image_blue)
                 .error(R.drawable.ic_error_blue)
                 .override(imageFilm.resources.getDimensionPixelSize(R.dimen.image_size))
@@ -135,9 +135,9 @@ class MovieListFragment : Fragment() {
     }
     /* class RecyclerView.Adapter */
     class MovieAdapter(private val inflater: LayoutInflater, private val listener: OnRepoSelectedListener) : RecyclerView.Adapter<MovieViewHolder>() {
-        private val items = ArrayList<MovieItem>()
+        private val items = ArrayList<Movie>()
 
-        fun setItems(repos: List<MovieItem>,view: View) {
+        fun setItems(repos: List<Movie>,view: View) {
             //items.clear()
             view.findViewById<ProgressBar>(R.id.progressBar).visibility = View.INVISIBLE
             items.addAll(repos)
@@ -165,11 +165,11 @@ class MovieListFragment : Fragment() {
         }
 
         interface OnRepoSelectedListener {
-            fun onRepoSelect(item: MovieItem, addToFavorite: Boolean)
+            fun onRepoSelect(item: Movie, addToFavorite: Boolean)
         }
     }
 
     interface MovieListListener {
-        fun onMovieSelected(moviesItemDetailed: MovieItem)
+        fun onMovieSelected(moviesItemDetailed: Movie)
     }
 }

@@ -1,6 +1,7 @@
 package com.example.moviesfilmroom.data;
 
 
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.Database;
 import androidx.room.Room;
@@ -13,7 +14,7 @@ import com.example.moviesfilmroom.data.entity.Movie;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Movie.class},version = 1,exportSchema = false)
+@Database(entities = {Movie.class},version = 2,exportSchema = false)
 abstract class MovieRoomDatabase extends RoomDatabase {
     abstract MovieDao movieDao();
 
@@ -22,13 +23,22 @@ abstract class MovieRoomDatabase extends RoomDatabase {
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool (NUMBER_OF_TREADS);
 
+    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Поскольку мы не изменяли таблицу, здесь больше ничего не нужно делать.
+        }
+    };
+
     static MovieRoomDatabase getDatabase (final Context context){
         if (INSTANCE == null) {
             synchronized (MovieRoomDatabase.class){
                 if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             MovieRoomDatabase.class, "movie_database")
+                            .addMigrations(MIGRATION_1_2)
                             .addCallback(sMovieDatabaseCallback)
+                            .allowMainThreadQueries()
                             .build();
                 }
             }
@@ -48,12 +58,19 @@ abstract class MovieRoomDatabase extends RoomDatabase {
                 MovieDao dao = INSTANCE.movieDao();
                 dao.deleteAll();
 
-                Movie movie = new Movie("Hello");
+                /*Movie movie = new Movie();
+                movie.id = 1;
+                movie.title = "Hello 1";
+                movie.picUrl = "None 1";
                 dao.insert(movie);
-                movie = new Movie("World");
-                dao.insert(movie);
-
+                movie = new Movie();
+                movie.id = 2;
+                movie.title = "Hello 2";
+                movie.picUrl = "None 2";
+                dao.insert(movie);*/
             });
         }
     };
 }
+
+

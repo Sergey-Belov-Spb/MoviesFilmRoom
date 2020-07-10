@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesfilmroom.R
+import com.example.moviesfilmroom.data.entity.Movie
 import com.example.moviesfilmroom.data.entity.MovieItem
 import com.example.moviesfilmroom.presentation.viewmodel.MovieListViewModel
 import java.util.ArrayList
@@ -33,7 +34,9 @@ class MovieListFavoriteFragment: Fragment()  {
         initRecycler()
 
         viewModel = ViewModelProviders.of(activity!!).get(MovieListViewModel::class.java!!)
-        viewModel!!.moviesFavorite.observe(this.viewLifecycleOwner, Observer<List<MovieItem>> { repos -> adapter!!.setItems(repos)})
+        viewModel!!.moviesFavorite.observe(this.viewLifecycleOwner, Observer<List<Movie>> {
+                repos -> adapter!!.setItems(repos)
+        })
 
     }
 
@@ -41,7 +44,7 @@ class MovieListFavoriteFragment: Fragment()  {
         adapter = MovieListFavoriteFragment.ReposAdapter(
             LayoutInflater.from(context),
             object : MovieListFavoriteFragment.ReposAdapter.OnRepoSelectedListener {
-                override fun onRepoSelect(item: MovieItem, addToFavorite: Boolean) {
+                override fun onRepoSelect(item: Movie, addToFavorite: Boolean) {
                     if (addToFavorite==false) { listener?.onMovieSelected(item)}
                     else {
                         viewModel!!.onMovieSelect(item,addToFavorite)
@@ -55,9 +58,9 @@ class MovieListFavoriteFragment: Fragment()  {
 
 
     class ReposAdapter(private val inflater: LayoutInflater, private val listener: OnRepoSelectedListener) : RecyclerView.Adapter<MovieListFragment.MovieViewHolder>() {
-        private val items = ArrayList<MovieItem>()
+        private val items = ArrayList<Movie>()
 
-        fun setItems(repos: List<MovieItem>) {
+        fun setItems(repos: List<Movie>) {
             items.clear()
             for (i in 0..repos.size-1) {
                 if (repos[i].favorite == true) {items.add(repos[i])}
@@ -91,10 +94,10 @@ class MovieListFavoriteFragment: Fragment()  {
         }
 
         interface OnRepoSelectedListener {
-            fun onRepoSelect(item: MovieItem,addToFavorite: Boolean)
+            fun onRepoSelect(item: Movie,addToFavorite: Boolean)
         }
     }
     interface MovieListListener {
-        fun onMovieSelected(moviesItemDetailed: MovieItem)
+        fun onMovieSelected(moviesItemDetailed: Movie)
     }
 }

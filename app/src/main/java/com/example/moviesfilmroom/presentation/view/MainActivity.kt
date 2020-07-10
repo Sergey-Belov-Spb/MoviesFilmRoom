@@ -8,9 +8,9 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.moviesfilmroom.R
-import com.example.moviesfilmroom.data.entity.MovieItem
+import com.example.moviesfilmroom.data.entity.Movie
+import com.example.moviesfilmroom.presentation.viewmodel.MovieListViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.*
 
 
 class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,MovieListFavoriteFragment.MovieListListener {
@@ -18,12 +18,16 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,Mo
         const val TAG = "MainActiviry"
     }
 
+    //val movieViewModel : MovieListViewModel? = null;
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initButtonListener()
         openAllMoviesList()
+        val movieViewModel =  MovieListViewModel(this.application)
     }
 
 
@@ -44,19 +48,14 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,Mo
         edit.commit()
     }
     fun initButtonListener() {
-        findViewById<Button>(R.id.debugBtn).setOnClickListener{
-
-            /*val data = Date();
-            val curTime = data.time
-            val x =(curTime - readLastTime())/1000
-            Log.d(TAG,"GetTime = $curTime $x ")
-            storeLastTime(curTime)*/
+        /*findViewById<Button>(R.id.debugBtn).setOnClickListener{
             Log.d(TAG,"Button ")
+            val viewModel = ViewModelProviders.of(this!!).get(MovieListViewModel::class.java!!)
+            viewModel.printBase()
         }
         findViewById<Button>(R.id.debugBtn2).setOnClickListener {
-
             Log.d(TAG,"Button2 ")
-        }
+        }*/
 
         findViewById<BottomNavigationView>(R.id.navigationBottom).setOnNavigationItemSelectedListener {menuItem ->
             when(menuItem.itemId){
@@ -89,10 +88,10 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,Mo
             .commit()
     }
 
-    private fun openDetailedFragment(movieItem: MovieItem) {
+    private fun openDetailedFragment(movieItem: Movie) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(movieItem.title,movieItem.gitUrl),MovieDetailedFragment.TAG)
+            .replace(R.id.fragmentContainer,MovieDetailedFragment.newInstance(movieItem.title,movieItem.picUrl),MovieDetailedFragment.TAG)
             .addToBackStack("Detaled")
             .commit()
     }
@@ -111,7 +110,7 @@ class MainActivity : AppCompatActivity(), MovieListFragment.MovieListListener,Mo
         }
     }
 
-    override fun onMovieSelected(moviesItemDetailed: MovieItem) {
+    override fun onMovieSelected(moviesItemDetailed: Movie) {
         Log.d(TAG,"Show Detailed")
         openDetailedFragment(moviesItemDetailed)
     }
