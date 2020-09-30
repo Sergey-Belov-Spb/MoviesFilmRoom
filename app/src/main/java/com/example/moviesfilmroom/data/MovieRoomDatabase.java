@@ -1,6 +1,5 @@
 package com.example.moviesfilmroom.data;
 
-
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.Database;
@@ -42,8 +41,9 @@ abstract class MovieRoomDatabase extends RoomDatabase {
                             .build();
                 }
             }
-
         }
+        MovieDao dao = INSTANCE.movieDao();
+        dao.deleteAll();
         return INSTANCE;
     }
 
@@ -55,8 +55,8 @@ abstract class MovieRoomDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background.
                 // If you want to start with more words, just add them.
-                MovieDao dao = INSTANCE.movieDao();
-                dao.deleteAll();
+                //MovieDao dao = INSTANCE.movieDao();
+                //dao.deleteAll();
 
                 /*Movie movie = new Movie();
                 movie.id = 1;
@@ -72,5 +72,3 @@ abstract class MovieRoomDatabase extends RoomDatabase {
         }
     };
 }
-
-
