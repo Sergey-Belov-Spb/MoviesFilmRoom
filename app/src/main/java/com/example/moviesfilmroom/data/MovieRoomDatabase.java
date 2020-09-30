@@ -1,6 +1,5 @@
 package com.example.moviesfilmroom.data;
 
-
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.Database;
@@ -42,7 +41,6 @@ abstract class MovieRoomDatabase extends RoomDatabase {
                             .build();
                 }
             }
-
         }
         MovieDao dao = INSTANCE.movieDao();
         dao.deleteAll();
